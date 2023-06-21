@@ -1,4 +1,5 @@
 using Beerbase.Model;
+using System.ComponentModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,12 @@ builder.Services.AddDbContext<BeerbaseContext>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// Customise swagger display names
+builder.Services.AddSwaggerGen(c =>
+{
+    c.CustomSchemaIds(x => x.GetCustomAttributes(false).OfType<DisplayNameAttribute>().FirstOrDefault()?.DisplayName ?? x.Name);
+});
 
 var app = builder.Build();
 

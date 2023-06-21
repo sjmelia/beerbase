@@ -19,7 +19,7 @@ namespace Beerbase.Controllers
         }
 
         [HttpGet("{id}", Name = "GetBeer")]
-        public async Task<ActionResult<Beer>> GetAsync(int id)
+        public async Task<ActionResult<BeerDto>> GetAsync(int id)
         {
             var beer = await _beerbaseContext.Beers.SingleOrDefaultAsync(b => b.BeerId == id);
 
@@ -28,46 +28,54 @@ namespace Beerbase.Controllers
                 return NotFound();
             }
 
-            return beer;
+            return Ok(new BeerDto(beer));
         }
 
         [HttpGet(Name = "GetBeers")]
-        public async Task<ActionResult<IEnumerable<Beer>>> GetAsync(decimal? gtAlcoholByVolume, decimal? ltAlcoholByVolume)
+        public ActionResult<IEnumerable<BeerDto>> Get(decimal? gtAlcoholByVolume, decimal? ltAlcoholByVolume)
         {
-            var beersQueryable = _beerbaseContext.Beers.AsQueryable();
+            IQueryable<Beer> beers = _beerbaseContext.Beers;
 
             if (gtAlcoholByVolume != null)
             {
-                beersQueryable = beersQueryable.Where(b => b.PercentageAlcoholByVolume > gtAlcoholByVolume);
+                beers = beers.Where(b => b.PercentageAlcoholByVolume > gtAlcoholByVolume);
             }
 
             if (ltAlcoholByVolume != null)
             {
-                beersQueryable = beersQueryable.Where(b => b.PercentageAlcoholByVolume < ltAlcoholByVolume);
+                beers = beers.Where(b => b.PercentageAlcoholByVolume < ltAlcoholByVolume);
             }
 
-            var beers = await beersQueryable.ToArrayAsync();
-            return beers;
+            var beerDtos = beers.Select(b => new BeerDto(b));
+
+            return Ok(beerDtos);
         }
 
         [HttpPost(Name = "PostBeer")]
-        public async Task<ActionResult<Beer>> PostAsync(BeerDto beerDto)
+        public async Task<ActionResult<BeerDto>> PostAsync(AddOrUpdateBeerDto beerDto)
         {
+            // Check if beer exists with same name? See README
+            var beerExistsWithSameName = _beerbaseContext.Beers.Any(b => b.Name == beerDto.Name);
+            if (beerExistsWithSameName)
+            {
+                return Conflict();
+            }
+
             var beer = new Beer()
             {
                 Name = beerDto.Name,
                 PercentageAlcoholByVolume = beerDto.PercentageAlcoholByVolume,
                 Brewery = null,
-                BarsServedAt = new Bar[] { }
+                BarsServedAt = Array.Empty<Bar>()
             };
 
             await _beerbaseContext.Beers.AddAsync(beer);
             await _beerbaseContext.SaveChangesAsync();
-            return Ok(beer);
+            return Ok(new BeerDto(beer));
         }
 
         [HttpPut("{id}", Name = "PutBeer")]
-        public async Task<ActionResult<Beer>> PutAsync(int id, BeerDto beerDto)
+        public async Task<ActionResult<BeerDto>> PutAsync(int id, AddOrUpdateBeerDto beerDto)
         {
             var beer = await _beerbaseContext.Beers.SingleOrDefaultAsync(b => b.BeerId == id);
 
@@ -79,7 +87,7 @@ namespace Beerbase.Controllers
             beer.Name = beerDto.Name;
             beer.PercentageAlcoholByVolume = beerDto.PercentageAlcoholByVolume;
             await _beerbaseContext.SaveChangesAsync();
-            return beer;
+            return Ok(new BeerDto(beer));
         }
     }
 }

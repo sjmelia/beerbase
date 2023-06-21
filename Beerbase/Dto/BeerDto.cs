@@ -1,9 +1,22 @@
-﻿namespace Beerbase.Dto
+﻿using Beerbase.Model;
+using System.ComponentModel;
+
+namespace Beerbase.Dto
 {
+    [DisplayName("Beer")]
     public class BeerDto
     {
-        public required string Name { get; set; }
+        public BeerDto(Beer beer)
+        {
+            this.BeerId = beer.BeerId;
+            this.Name = beer.Name;
+            this.PercentageAlcoholByVolume = beer.PercentageAlcoholByVolume;
+        }
 
-        public required decimal PercentageAlcoholByVolume { get; set; }
+        public int BeerId { get; private set; }
+
+        public string Name { get; private set; }
+
+        public decimal PercentageAlcoholByVolume { get; private set; }
     }
 }
