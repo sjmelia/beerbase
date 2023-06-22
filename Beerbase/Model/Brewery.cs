@@ -4,8 +4,8 @@
     {
         public int BreweryId { get; set; }
 
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
-        public required ICollection<Beer> Beers { get; set; }
+        public ICollection<Beer> Beers { get; set; }
     }
 }

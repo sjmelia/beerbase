@@ -2,8 +2,8 @@
 {
     public class AddOrUpdateBeerDto
     {
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
-        public required decimal PercentageAlcoholByVolume { get; set; }
+        public decimal PercentageAlcoholByVolume { get; set; }
     }
 }

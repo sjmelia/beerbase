@@ -4,7 +4,7 @@
     {
         public int BeerId { get; set; }
 
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
         public decimal PercentageAlcoholByVolume { get; set; }
 
@@ -16,6 +16,6 @@
         /// </remarks>
         public Brewery? Brewery { get; set; }
 
-        public required ICollection<Bar> BarsServedAt { get; set; }
+        public ICollection<Bar> BarsServedAt { get; set; }
     }
 }

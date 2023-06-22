@@ -2,8 +2,8 @@
 {
     public class AddOrUpdateBarBeerDto
     {
-        public required int BeerId { get; set; }
+        public int BeerId { get; set; }
 
-        public required int BarId { get; set; }
+        public int BarId { get; set; }
     }
 }

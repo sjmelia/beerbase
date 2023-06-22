@@ -2,6 +2,6 @@
 {
     public class AddOrUpdateBreweryDto
     {
-        public required string Name { get; set; }
+        public string Name { get; set; }
     }
 }

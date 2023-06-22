@@ -1,4 +1,5 @@
 using Beerbase.Model;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,17 +18,15 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
+using (var context = scope.ServiceProvider.GetService<BeerbaseContext>())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    context.Database.EnsureCreated();
 }
 
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
